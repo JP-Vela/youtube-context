@@ -1,0 +1,3 @@
+# Required modules
+youtube-transcript-api
+chromadb

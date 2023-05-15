@@ -1,6 +1,7 @@
 from organizeTranscript import TranscriptDumper
 from youtube_transcript_api import YouTubeTranscriptApi
 import chromadb
+from chromadb.utils import embedding_functions
 import math
 from urllib.parse import urlparse
 from urllib.parse import parse_qs
@@ -28,7 +29,8 @@ class VideoDocs:
         client = chromadb.Client()
 
         if embeddings == None:
-            self.collection = client.create_collection("documents")
+            sentence_transformer_ef = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2")
+            self.collection = client.create_collection("documents", embedding_function=sentence_transformer_ef)
         else:
             self.collection = client.create_collection("documents", embedding_function=embeddings)
 
@@ -46,6 +48,7 @@ class VideoDocs:
         return self.video_id
 
 
+
 # Only holds the function for quering the vector store and return a timestamp url
 class VideoQuery:
     def __init__(self) -> None:
@@ -53,12 +56,11 @@ class VideoQuery:
 
     def ask(self, video_docs: VideoDocs, query:str) -> str:
         """
-        Returns a youtube timestamp answering the query
+        Returns a youtube timestamp url answering the query
 
         video_docs: Created from a YouTube URL
         query: The query to be answered 
         """
-
         collection = video_docs.get_collection()
         video_id = video_docs.get_video_id()
 
@@ -73,3 +75,20 @@ class VideoQuery:
         timestamp_url = f'https://youtu.be/{video_id}?t={math.floor(timestamp)}'
         return timestamp_url
     
+
+    def ask_time_only(self, video_docs: VideoDocs, query:str) -> int:
+        """
+        Returns a timestamp answering the query
+
+        video_docs: Created from a YouTube URL
+        query: The query to be answered 
+        """
+        collection = video_docs.get_collection()
+
+        results = collection.query(
+            query_texts=[query],
+            n_results=1,
+        )
+
+        timestamp = results['metadatas'][0][0]['start']
+        return int(timestamp)

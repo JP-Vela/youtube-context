@@ -1,3 +1,23 @@
+"""
+Takes a transcript array of dictionaries and splits it up into docs of n length each.
+It doesn't have to be a youtube transcript. Future plans include transcription and parsing of regular audio
+
+transcript dictionary structure:
+
+    [
+        {
+            'start': 0.0,
+            'text': '...hello there...'  
+        },
+    
+        {
+            'start': 5.0,
+            'text': '...General Kenobi...'  
+        }
+    ]
+    
+"""
+
 class TranscriptDumper():
     def __init__(self, transcript, doc_length=100) -> None:
         self.doc_length = doc_length
