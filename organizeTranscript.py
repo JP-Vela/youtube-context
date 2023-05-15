@@ -1,11 +1,3 @@
-from youtube_transcript_api import YouTubeTranscriptApi
-
-# https://www.youtube.com/watch?v=SsrWgwCxTaM
-video_id = 'SsrWgwCxTaM'
-
-#transcript = YouTubeTranscriptApi.get_transcript(video_id)
-
-
 class TranscriptDumper():
     def __init__(self, transcript, doc_length=100) -> None:
         self.doc_length = doc_length
